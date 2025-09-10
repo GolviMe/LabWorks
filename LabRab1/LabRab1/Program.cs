@@ -10,6 +10,8 @@ namespace LabRab1
     {
         static void Main(string[] args)
         {
+            Console.WriteLine();
+
             Chemist Heisenberg = new Chemist("Walter", "White", 50, "Male", "Public School of Albuquerque", 6500, 7);
             Heisenberg.Info();
             Engineer Ehrmantraut = new Engineer("Mike", "Ehrmantraut", 69, "Male", "Los Pollos Hermanos", 200000, 1);
