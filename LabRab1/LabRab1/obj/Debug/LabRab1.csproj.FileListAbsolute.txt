@@ -1,0 +1,14 @@
+C:\Users\0\source\repos\LabRab1\LabRab1\bin\Debug\LabRab1.exe.config
+C:\Users\0\source\repos\LabRab1\LabRab1\bin\Debug\LabRab1.exe
+C:\Users\0\source\repos\LabRab1\LabRab1\bin\Debug\LabRab1.pdb
+C:\Users\0\source\repos\LabRab1\LabRab1\obj\Debug\LabRab1.csproj.AssemblyReference.cache
+C:\Users\0\source\repos\LabRab1\LabRab1\obj\Debug\LabRab1.csproj.CoreCompileInputs.cache
+C:\Users\0\source\repos\LabRab1\LabRab1\obj\Debug\LabRab1.exe
+C:\Users\0\source\repos\LabRab1\LabRab1\obj\Debug\LabRab1.pdb
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\bin\Debug\LabRab1.exe.config
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\bin\Debug\LabRab1.exe
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\bin\Debug\LabRab1.pdb
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\obj\Debug\LabRab1.csproj.AssemblyReference.cache
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\obj\Debug\LabRab1.csproj.CoreCompileInputs.cache
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\obj\Debug\LabRab1.exe
+C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab1\LabRab1\obj\Debug\LabRab1.pdb
