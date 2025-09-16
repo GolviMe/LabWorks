@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabRab1
+namespace LabRab2
 {
     internal class Program
     {
