@@ -51,3 +51,4 @@ Ekaterina Maksimova FTF 4 2
 Valeriy Shiyan FKTiPM 1 5
 Arseniy Zhuk FKTiPM 1 5
 Eduard Gorodetskiy FKTiPM 1 5
+A B FMiKN 3 3

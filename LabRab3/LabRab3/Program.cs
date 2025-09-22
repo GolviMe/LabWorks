@@ -139,23 +139,33 @@ namespace LabRab3
         }
 
     }
-    class Student
+
+    class Institute
+    {
+        public string nameOfInstitute;
+
+        public Institute(string nameOfInstitute)
+        {
+            this.nameOfInstitute = nameOfInstitute;
+        }
+    }
+
+    class Student : Institute
     {
         public string firstNameOfStudent;
         public string lastNameOfStudent;
-        public string nameOfInstitute;
 
         public int numberOfCourse;
         public int lowestMark;
 
-        public Student(string firstNameOfStudent, string lastNameOfStudent, string nameOfInstitute, int numberOfCourse, int lowestMark)
+        public Student(string firstNameOfStudent, string lastNameOfStudent, string nameOfInstitute, int numberOfCourse, int lowestMark) : base(nameOfInstitute) 
         {
             this.firstNameOfStudent = firstNameOfStudent;
             this.lastNameOfStudent = lastNameOfStudent;
-            this.nameOfInstitute = nameOfInstitute;
             this.numberOfCourse = numberOfCourse;
             this.lowestMark = lowestMark;
         }
+
         public string ToTXT()
         {
             return $"{firstNameOfStudent} {lastNameOfStudent} {nameOfInstitute} {numberOfCourse} {lowestMark}";
