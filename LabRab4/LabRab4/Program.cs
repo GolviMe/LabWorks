@@ -3,213 +3,210 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LabRab3
 {
+
+    interface IPrintable
+    {
+        void PrintInfo();
+    }
+
     interface IScorable
     {
         void CheckScore();
     }
 
 
+    delegate void StudentHandler(Student st);
+
+    class Institute
+    {
+        public string nameOfInstitute { get; set; }
+        public List<Student> listOfStudents { get; set; } = new List<Student>();
+
+        public Institute(string name)
+        {
+            nameOfInstitute = name;
+        }
+
+        public void AddStudent(Student st)
+        {
+            listOfStudents.Add(st);
+        }
+
+        public void ForEachStudent(StudentHandler handler)
+        {
+            foreach (var s in listOfStudents)
+                handler(s);
+        }
+    }
+
+    class Student : IPrintable, IScorable
+    {
+        public string firstNameOfStudent;
+        public string lastNameOfStudent;
+        public int numberOfCourse;
+        public int lowestMark;
+
+        public Student(string first, string last, int course, int mark)
+        {
+            firstNameOfStudent = first;
+            lastNameOfStudent = last;
+            numberOfCourse = course;
+            lowestMark = mark;
+        }
+
+        public string ToTXT(string instituteName)
+        {
+            return $"{firstNameOfStudent} {lastNameOfStudent} {instituteName} {numberOfCourse} {lowestMark}";
+        }
+
+        public static Student FromTXT(string text, out string instituteName)
+        {
+            string[] parts = text.Split();
+            instituteName = parts[2];
+            return new Student(parts[0], parts[1], int.Parse(parts[3]), int.Parse(parts[4]));
+        }
+
+        public void PrintInfo()
+        {
+            Console.WriteLine($"{firstNameOfStudent} {lastNameOfStudent}, {numberOfCourse} курс, мин. оценка {lowestMark}");
+        }
+
+        public void CheckScore()
+        {
+            if (lowestMark == 5) Console.WriteLine("Данный студент - Отличник!");
+            else if (lowestMark == 4) Console.WriteLine("Данный студент - Хорошист");
+            else Console.WriteLine("У данного студента проблемы с учёбой");
+        }
+    }
+
     internal class Program
     {
+        static string filePath = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab3\LabRab3\StudentsInfo.txt";
+
         static void Main(string[] args)
         {
+            Institute FKTiPM = new Institute("FKTiPM");
+            Institute FMiKN = new Institute("FMiKN");
+            Institute FTF = new Institute("FTF");
+
+            List<Institute> institutes = new List<Institute> { FKTiPM, FMiKN, FTF };
+            ImportStudentsFromFile(institutes);
+
+
             int choice = 0;
-
-            List<Student> listOfStudents = ImportStudentsFromFile();
-
             Console.WriteLine("Добро пожаловать в систему!");
             while (choice != 5)
             {
-                Console.WriteLine("\nВыберите, что требуется:\n1 - Посмотреть список студентов\n2 - Добавить студента\n3 - Вывести институт, на котором на первом курсе наибольшее количество отличников\n4 - Вывести случайного студента и его успеваемость\n5 - Выход из системы\n");
-
-                try
-                {
-                    choice = Convert.ToInt32(Console.ReadLine());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Вы ввели неверные данные, попробуйте ещё раз\n");
-                }
+                Console.WriteLine("\nМеню:\n1 - Список студентов\n2 - Добавить студента\n3 - Лидер по отличникам (1 курс)\n4 - Посмотреть успеваемость случайного студента\n5 - Выход");
+                try { choice = int.Parse(Console.ReadLine()); }
+                catch { Console.WriteLine("Ошибка ввода."); continue; }
 
                 if (choice == 1)
                 {
-                    //Показать список студентов
-
-                    Console.WriteLine("\nВсе студенты:");
-                    foreach (var s in listOfStudents)
+                    foreach (var inst in institutes)
                     {
-                        Console.WriteLine($"{s.firstNameOfStudent} {s.lastNameOfStudent}, обучается на {s.numberOfCourse} курсе факультета {s.nameOfInstitute}, минимальная оценка: {s.lowestMark}");
+                        Console.WriteLine($"\nСтуденты института {inst.nameOfInstitute}:");
+                        inst.ForEachStudent((s) => s.PrintInfo());
                     }
-
                 }
                 else if (choice == 2)
                 {
-                    //Добавить студента
-                    Console.WriteLine("Введите имя: ");
-                    string firstName = Console.ReadLine();
+                    Console.Write("Имя: ");
+                    string fn = Console.ReadLine();
 
-                    Console.WriteLine("Введите фамилию: ");
-                    string lastName = Console.ReadLine();
+                    Console.Write("Фамилия: ");
+                    string ln = Console.ReadLine();
 
-                    Console.WriteLine("Введите институт: ");
-                    string institute = Console.ReadLine();
+                    Console.Write("Институт (FKTiPM/FMiKN/FTF): ");
+                    string instName = Console.ReadLine();
+                    while (!(instName == "FKTiPM" || instName == "FMiKN" || instName == "FTF"))
+                    {
+                        Console.Write("Вы ввели несуществующий институт, попробуйте ещё раз.\n");
+                        instName = Console.ReadLine();
+                    }
 
-                    Console.WriteLine("Введите номер курса: ");
+                    Console.Write("Курс: ");
                     int course = int.Parse(Console.ReadLine());
 
-                    Console.WriteLine("Введите минимальную оценку: ");
+                    Console.Write("Мин. оценка: ");
                     int mark = int.Parse(Console.ReadLine());
 
-                    Student newStudent = new Student(firstName, lastName, institute, course, mark);
-                    listOfStudents.Add(newStudent);
+                    Student st = new Student(fn, ln, course, mark);
+                    var inst = institutes.FirstOrDefault(i => i.nameOfInstitute == instName);
 
-                    ExportStudentsToFile(listOfStudents);
-
-                    Console.WriteLine("Студент добавлен!\n");
+                    if (inst != null)
+                    {
+                        inst.AddStudent(st);
+                        ExportStudentsToFile(institutes);
+                        Console.WriteLine("Студент добавлен!");
+                    }
                 }
                 else if (choice == 3)
                 {
-                    //Вывести институт, на котором на первом курсе наибольшее количество отличников
-
-                    int maxValueOfMarks = 0;
-                    string nameOfBestInstitute = "";
-
-                    Dictionary<string, int> bestInstitute = new Dictionary<string, int>();
-                    foreach (var s in listOfStudents)
+                    string bestInst = "";
+                    int maxCount = 0;
+                    foreach (var inst in institutes)
                     {
-
-                        if (s.lowestMark == 5 && s.numberOfCourse == 1)
+                        int count = inst.listOfStudents.Count(s => s.lowestMark == 5 && s.numberOfCourse == 1);
+                        if (count > maxCount)
                         {
-                            if (bestInstitute.ContainsKey(s.nameOfInstitute))
-                            {
-                                bestInstitute[s.nameOfInstitute] += 1;
-                            }
-                            else bestInstitute[s.nameOfInstitute] = 1;
-                            if (maxValueOfMarks < bestInstitute[s.nameOfInstitute])
-                            {
-                                maxValueOfMarks = bestInstitute[s.nameOfInstitute];
-                                nameOfBestInstitute = s.nameOfInstitute;
-                            }
+                            maxCount = count;
+                            bestInst = inst.nameOfInstitute;
                         }
                     }
-                    if (maxValueOfMarks != 0)
-                    {
-                        Console.WriteLine("Название института, на котором на первом курсе больше всего отличников: {0}.", nameOfBestInstitute);
-                    }
+                    if (maxCount > 0)
+                        Console.WriteLine($"Лучше всего отличников на 1 курсе в институте: {bestInst}");
                     else
-                    {
-                        Console.WriteLine("Такого института пока что не существует.");
-                    }
+                        Console.WriteLine("Отличников на 1 курсе нет.");
                 }
-                else if (choice == 4)
+                else if(choice == 4)
                 {
-                    //Выведите рандомного студента
-
-                    string[] temp = File.ReadAllLines(@"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab3\LabRab3\StudentsInfo.txt");
-                    int amountOfStudents = temp.Length;
-
                     Random rnd = new Random();
-                    int numOfStudent = rnd.Next(0, temp.Length);
-
-                    listOfStudents[numOfStudent].CheckScore();
+                    int rndInst = rnd.Next(0, 3);
+                    int rndStud = rnd.Next(0, institutes[rndInst].listOfStudents.Count);
+                    Console.WriteLine(institutes[rndInst].nameOfInstitute);
+                    institutes[rndInst].listOfStudents[rndStud].PrintInfo();
+                    institutes[rndInst].listOfStudents[rndStud].CheckScore();
                 }
                 else if (choice == 5)
                 {
-                    //Ливнуть с этой катки
-
-                    Console.WriteLine("Пока");
+                    Console.WriteLine("Пока!");
                     Console.Read();
                 }
-                else
-                {
-                    Console.WriteLine("Вы ввели неправильное значение, попробуйте ещё раз");
-                }
+                else Console.WriteLine("Вы ввели неверное значение, попробуйте ещё раз\n");
             }
         }
 
-        static string filePath = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab3\LabRab3\StudentsInfo.txt";
-
-        static List<Student> ImportStudentsFromFile()
+        static void ImportStudentsFromFile(List<Institute> institutes)
         {
-            var result = new List<Student>();
             if (File.Exists(filePath))
             {
                 string[] lines = File.ReadAllLines(filePath, Encoding.UTF8);
                 foreach (string line in lines)
                 {
                     if (!string.IsNullOrWhiteSpace(line))
-                        result.Add(Student.FromTXT(line));
+                    {
+                        string instName;
+                        Student st = Student.FromTXT(line, out instName);
+                        var inst = institutes.FirstOrDefault(i => i.nameOfInstitute == instName);
+                        inst?.AddStudent(st);
+                    }
                 }
             }
-            return result;
         }
 
-        static void ExportStudentsToFile(List<Student> students)
+        static void ExportStudentsToFile(List<Institute> institutes)
         {
-            string[] lines = new string[students.Count];
-            for (int i = 0; i < students.Count; i++)
+            var lines = new List<string>();
+            foreach (var inst in institutes)
             {
-                lines[i] = students[i].ToTXT();
+                foreach (var st in inst.listOfStudents)
+                    lines.Add(st.ToTXT(inst.nameOfInstitute));
             }
             File.WriteAllLines(filePath, lines, Encoding.UTF8);
         }
-
-    }
-
-    class Institute
-    {
-        public string nameOfInstitute;
-
-        public Institute(string nameOfInstitute)
-        {
-            this.nameOfInstitute = nameOfInstitute;
-        }
-    }
-
-    class Student : Institute, IScorable
-    {
-        public string firstNameOfStudent;
-        public string lastNameOfStudent;
-
-        public int numberOfCourse;
-        public int lowestMark;
-
-        public Student(string firstNameOfStudent, string lastNameOfStudent, string nameOfInstitute, int numberOfCourse, int lowestMark) : base(nameOfInstitute)
-        {
-            this.firstNameOfStudent = firstNameOfStudent;
-            this.lastNameOfStudent = lastNameOfStudent;
-            this.numberOfCourse = numberOfCourse;
-            this.lowestMark = lowestMark;
-        }
-
-        public string ToTXT()
-        {
-            return $"{firstNameOfStudent} {lastNameOfStudent} {nameOfInstitute} {numberOfCourse} {lowestMark}";
-        }
-        public static Student FromTXT(string text)
-        {
-            string[] parts = text.Split();
-            return new Student(parts[0], parts[1], parts[2], Convert.ToInt32(parts[3]), Convert.ToInt32(parts[4]));
-        }
-        public void CheckScore()
-        {
-            if(lowestMark == 5)
-            {
-                Console.WriteLine("Студент {0} курса факультета {1} {2} {3} - Отличник", numberOfCourse, nameOfInstitute, firstNameOfStudent, lastNameOfStudent);
-            }
-            else if (lowestMark == 4)
-            {
-                Console.WriteLine("Студент {0} курса факультета {1} {2} {3} - Хорошист", numberOfCourse, nameOfInstitute, firstNameOfStudent, lastNameOfStudent);
-            }
-            else
-            {
-                Console.WriteLine("У студента {0} курса факультета {1} {2} {3} - проблемы с учёбой", numberOfCourse, nameOfInstitute, firstNameOfStudent, lastNameOfStudent);
-            }
-        }
-            
     }
 }
