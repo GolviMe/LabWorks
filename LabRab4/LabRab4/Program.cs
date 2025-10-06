@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace LabRab3
+namespace LabRab4
 {
 
     interface IPrintable
@@ -18,7 +18,10 @@ namespace LabRab3
     }
 
 
-    delegate void StudentHandler(Student st);
+    delegate void StudentHandler(Student st); 
+
+    
+
 
     class Institute
     {
@@ -42,6 +45,9 @@ namespace LabRab3
         }
     }
 
+    delegate void PrintAllAboutStudent(Student stud);
+
+
     class Student : IPrintable, IScorable
     {
         public string firstNameOfStudent;
@@ -57,9 +63,15 @@ namespace LabRab3
             lowestMark = mark;
         }
 
+
         public string ToTXT(string instituteName)
         {
             return $"{firstNameOfStudent} {lastNameOfStudent} {instituteName} {numberOfCourse} {lowestMark}";
+        }
+
+        public string ToTXT_Report()
+        {
+            return $"{firstNameOfStudent} {lastNameOfStudent}";
         }
 
         public static Student FromTXT(string text, out string instituteName)
@@ -80,11 +92,13 @@ namespace LabRab3
             else if (lowestMark == 4) Console.WriteLine("Данный студент - Хорошист");
             else Console.WriteLine("У данного студента проблемы с учёбой");
         }
+
+
     }
 
     internal class Program
     {
-        static string filePath = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab3\LabRab3\StudentsInfo.txt";
+        static string filePath = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab4\LabRab4\StudentsInfo.txt";
 
         static void Main(string[] args)
         {
@@ -95,6 +109,9 @@ namespace LabRab3
             List<Institute> institutes = new List<Institute> { FKTiPM, FMiKN, FTF };
             ImportStudentsFromFile(institutes);
 
+            PrintAllAboutStudent multiDelegate = null;
+            multiDelegate += (s) => s.PrintInfo();
+            multiDelegate += (s) => s.CheckScore();
 
             int choice = 0;
             Console.WriteLine("Добро пожаловать в систему!");
@@ -158,7 +175,30 @@ namespace LabRab3
                         }
                     }
                     if (maxCount > 0)
+                    {
                         Console.WriteLine($"Лучше всего отличников на 1 курсе в институте: {bestInst}");
+                        Console.WriteLine("Вот список этих студентов: ");
+
+                        string filePathForReview = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab4\LabRab4\ReportAboutBestInstitute.txt";
+                        var tempLines = new List<string>();
+
+                        tempLines.Add($"Список лучших первокурсников института {bestInst}:");
+                        foreach (var inst in institutes)
+                        {
+                            if (inst.nameOfInstitute == bestInst)
+                            {
+                                foreach (var st in inst.listOfStudents)
+                                {
+                                    if (st.lowestMark == 5)
+                                    {
+                                        Console.WriteLine($"{st.firstNameOfStudent} {st.lastNameOfStudent}");
+                                        tempLines.Add(st.ToTXT_Report());
+                                    }
+                                }
+                            }
+                        }
+                        File.WriteAllLines(filePathForReview, tempLines, Encoding.UTF8);
+                    }
                     else
                         Console.WriteLine("Отличников на 1 курсе нет.");
                 }
@@ -168,8 +208,7 @@ namespace LabRab3
                     int rndInst = rnd.Next(0, 3);
                     int rndStud = rnd.Next(0, institutes[rndInst].listOfStudents.Count);
                     Console.WriteLine(institutes[rndInst].nameOfInstitute);
-                    institutes[rndInst].listOfStudents[rndStud].PrintInfo();
-                    institutes[rndInst].listOfStudents[rndStud].CheckScore();
+                    multiDelegate(institutes[rndInst].listOfStudents[rndStud]);
                 }
                 else if (choice == 5)
                 {

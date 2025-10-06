@@ -27,7 +27,10 @@ namespace LabRab3
         public void ForEachStudent(StudentHandler handler)
         {
             foreach (var s in listOfStudents)
+            {
                 handler(s);
+            }
+                
         }
     }
 
@@ -49,6 +52,11 @@ namespace LabRab3
         public string ToTXT(string instituteName)
         {
             return $"{firstNameOfStudent} {lastNameOfStudent} {instituteName} {numberOfCourse} {lowestMark}";
+        }
+
+        public string ToTXT_Report()
+        {
+            return $"{firstNameOfStudent} {lastNameOfStudent}";
         }
 
         public static Student FromTXT(string text, out string instituteName)
@@ -137,7 +145,32 @@ namespace LabRab3
                         }
                     }
                     if (maxCount > 0)
+                    {
                         Console.WriteLine($"Лучше всего отличников на 1 курсе в институте: {bestInst}");
+                        Console.WriteLine("Вот список этих студентов: ");
+
+                        string filePathForReview = @"C:\Учебные материалы\2 курс\КАиСД\Гит\LabWorks\LabRab3\LabRab3\ReportAboutBestInstitute.txt";
+                        var tempLines = new List<string>();
+
+                        tempLines.Add($"Список лучших первокурсников института {bestInst}:");
+                        foreach (var inst in institutes)
+                        {
+                            if(inst.nameOfInstitute == bestInst)
+                            {
+                                foreach(var st in inst.listOfStudents)
+                                {
+                                    if(st.lowestMark == 5)
+                                    {
+                                        Console.WriteLine($"{st.firstNameOfStudent} {st.lastNameOfStudent}");
+                                        tempLines.Add(st.ToTXT_Report());
+                                    }
+                                }
+                            }
+                        }
+                        File.WriteAllLines(filePathForReview, tempLines, Encoding.UTF8);
+                    }
+                        
+
                     else
                         Console.WriteLine("Отличников на 1 курсе нет.");
                 }
