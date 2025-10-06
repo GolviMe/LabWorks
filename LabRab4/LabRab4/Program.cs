@@ -6,6 +6,10 @@ using System.Text;
 
 namespace LabRab4
 {
+    
+
+
+
 
     interface IPrintable
     {
