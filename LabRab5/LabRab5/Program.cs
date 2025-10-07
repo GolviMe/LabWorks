@@ -78,7 +78,7 @@ namespace LabRab5
 
         public static void GenerateInvalidCast()
         {
-            object obj = "hello";
+            object obj = "Hell";
             int number = (int)obj; // Неверное приведение
         }
 

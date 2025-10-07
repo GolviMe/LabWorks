@@ -6,10 +6,6 @@ using System.Text;
 
 namespace LabRab4
 {
-    
-
-
-
 
     interface IPrintable
     {
@@ -21,11 +17,7 @@ namespace LabRab4
         void CheckScore();
     }
 
-
     delegate void StudentHandler(Student st); 
-
-    
-
 
     class Institute
     {
